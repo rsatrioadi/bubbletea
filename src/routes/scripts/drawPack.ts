@@ -10,10 +10,10 @@ const layers = ['Presentation Layer', 'Service Layer', 'Domain Layer', 'Data Sou
 export default function drawPack(
 	canvas: d3.Selection<SVGGElement, unknown, null, undefined>,
 	roots: any[],
-	writeDetailHover: (detail: string) => void,
+	writeDetailHover: (detail: string) => void
 ) {
 	// COMPUTE
-	roots.forEach((root, index: number) => {
+	roots.forEach((root) => {
 		// 1. Compute the pack layout.
 		const pack = d3.pack<any>();
 		pack.padding(PADDING_INNER_PACK);
@@ -33,7 +33,7 @@ export default function drawPack(
 			'Service Layer': 0,
 			'Data Source Layer': 0,
 			'Domain Layer': 0,
-			'Unknown Layer': 0,
+			'Unknown Layer': 0
 		};
 		let total = 0;
 		root.each((d: any) => {
@@ -59,8 +59,8 @@ export default function drawPack(
 		3. do this until non dominan is found, then truncate the rest
 		*/
 		// turn the layerPercentage into array
-		const layerPercentageArray = Object.keys(layerPercentage).map(key => {
-			return {layer: key, percentage: layerPercentage[key]};
+		const layerPercentageArray = Object.keys(layerPercentage).map((key) => {
+			return { layer: key, percentage: layerPercentage[key] };
 		});
 		// sort the layerPercentageArray from highest to lowest
 		layerPercentageArray.sort((a, b) => b.percentage - a.percentage);
@@ -97,7 +97,7 @@ export default function drawPack(
 
 	let maxWidth = 0;
 	const previousRoots: any = [];
-	roots.forEach(root => {
+	roots.forEach((root) => {
 		const dominantLayer = root.data.dominantLayer;
 		/*
 			if dominant layer > 2 ,set Y to be -100
@@ -160,12 +160,12 @@ export default function drawPack(
 				const circle1 = {
 					x: previousRoot.containerX + previousRoot.r, // center of the circle
 					y: previousRoot.containerY + previousRoot.r, // center of the circle
-					r: previousRoot.r,
+					r: previousRoot.r
 				};
 				const circle2 = {
 					x: root.containerX + root.r, // center of the circle
 					y: root.containerY + root.r, // center of the circle
-					r: root.r,
+					r: root.r
 				};
 				if (doesCircleOverlap(circle1, circle2)) {
 					isOverlap = true;
@@ -231,7 +231,7 @@ export default function drawPack(
 				root.containerX += x;
 				root.containerY += y;
 				d3.select(this).attr('transform', `translate(${root.containerX},${root.containerY})`);
-			}),
+			})
 		);
 
 		root.each((d: any) => {
