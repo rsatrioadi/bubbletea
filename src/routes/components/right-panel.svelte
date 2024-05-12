@@ -10,66 +10,80 @@
 	function inputDataToHierarchyData(csvText: string): any {
 		// package, class, layer, count
 		const table = d3.csvParse(csvText);
-		const packages: any = new Map<String, any[]>();
-		// get all unique package, and append to table
-		table.forEach((row) => {
-			// parse all count to number
-			if (!(row.package in packages)) {
-				packages[row.package] = [];
+
+		// TODO: parameterize
+		const validLayers = ["Presentation Layer", "Service Layer", "Domain Layer", "Data Source Layer"];
+		
+		// normalize invalid layers
+		table.forEach(row => {
+			if (!validLayers.includes(row.layer)) {
+			row.layer = "Unknown Layer";
 			}
-			packages[row.package].push(row);
 		});
-		roots = [];
-		Object.entries(packages).forEach(([key, value]: any) => {
-			// setup data
-			let temporaryTable = [...value];
-			// parse all count to number
-			temporaryTable.forEach((row) => {
-				row.count = +row.count;
-			});
 
-			// if there's same class, combine them into one parent class and add -child1, -child2, etc
+		const obj: any = {};
+		
+		table.forEach(({package: pkg, class: cls, layer, count: cstr}) => {
+			const count = parseFloat(cstr);
+			if (!obj[pkg]) { obj[pkg] = {}; }
+			if (!obj[pkg][cls]) { obj[pkg][cls] = []; }
+			obj[pkg][cls].push({ layer, count });
+		});
 
-			let groupedTable: any = {};
-			temporaryTable.forEach((row: any) => {
-				if (!(row.class in groupedTable)) {
-					groupedTable[row.class] = [];
-				}
-				groupedTable[row.class].push(row);
-			});
+		const nodes: any = [];
 
-			temporaryTable = [];
-			Object.entries(groupedTable).forEach(([key, value]: any) => {
-				if (value.length > 1) {
-					// append children
-					value.forEach((row: any, index: number) => {
+		for (const pkg in obj) {
+			const classes = obj[pkg];
+			const temporaryTable: any = [];
+			
+			for (const cls in classes) {
+				const rows = classes[cls];
+			
+				// TODO: should we differentiate length=1?
+				if (rows.length > 1) {
+
+					// add instances with their respective layers and counts
+					rows.forEach((row: { count: any; layer: any; }, index: any) => {
 						temporaryTable.push({
-							class: `${key}-child${index + 1}`,
-							package: key,
+							class: `${cls}-child${index + 1}`,
+							package: cls,
 							count: row.count,
 							layer: row.layer
 						});
 					});
+
 					// append parent class
 					temporaryTable.push({
-						class: key,
-						package: value[0].package, // all same
+						class: cls,
+						package: pkg,
 						count: 0,
 						layer: ''
 					});
-				} else {
-					temporaryTable.push(value[0]);
-				}
-			});
 
+				} else {
+					
+					temporaryTable.push({
+						class: cls,
+						package: pkg,
+						count: rows[0].count,
+						layer: rows[0].layer
+					});
+				}
+			}
+		
 			// append package
 			temporaryTable.push({
-				class: key,
+				class: pkg,
 				package: '',
 				count: 0,
 				layer: ''
 			});
 
+			nodes.push(temporaryTable);
+		}
+
+		roots = [];
+		nodes.forEach((temporaryTable: unknown[]) => {
 			// turn to d3 hierarchy
 			const root = d3
 				.stratify()
@@ -81,6 +95,7 @@
 			roots.push(root);
 		});
 	}
+	
 	function handleFileChange(e: any) {
 		const file = e.target?.files?.[0];
 		if (!file) return;
