@@ -7,11 +7,36 @@ const PADDING_X_LAYER = 100;
 import * as d3 from 'd3';
 const layers = ['Presentation Layer', 'Service Layer', 'Domain Layer', 'Data Source Layer'];
 
+function adjustHexColor(hex: string, percent: number): string {
+	// Parse the hex color
+	const num = parseInt(hex.slice(1), 16);
+
+	// Extract RGB components
+	const rgb = [
+		(num >> 16) & 0xFF,
+		(num >> 8) & 0xFF,
+		num & 0xFF
+	];
+
+	const adjustedRgb = rgb
+		.map(c => Math.floor(c + (255 - c) * percent)) // Adjust RGB components based on the percentage
+		.map(c => Math.max(Math.min(c, 255), 0)); // Cap RGB values at 0 and 255
+
+	// Convert RGB back to hex
+	const adjustedHex = "#" + adjustedRgb.reduce((acc, c) => acc + c.toString(16).padStart(2, '0'), '');
+
+	return adjustedHex;
+}
+
 export default function drawPack(
 	canvas: d3.Selection<SVGGElement, unknown, null, undefined>,
 	roots: any[],
 	writeDetailHover: (detail: string) => void
 ) {
+	const layerCountProto: any = layers.reduce((obj: {[key: string]: number}, item: string) => {
+		obj[item] = 0;
+		return obj;
+	}, {'Unknown Layer': 0});
 	// COMPUTE
 	roots.forEach((root) => {
 		// 1. Compute the pack layout.
@@ -28,20 +53,10 @@ export default function drawPack(
 		pack(root);
 
 		// 2. find the total 'count' attribute for each layer
-		const layerCount: any = {
-			'Presentation Layer': 0,
-			'Service Layer': 0,
-			'Data Source Layer': 0,
-			'Domain Layer': 0,
-			'Unknown Layer': 0
-		};
+		const layerCount: any = { ...layerCountProto };
 		let total = 0;
 		root.each((d: any) => {
-			let layer = d.data.layer;
-			if (!layers.includes(layer)) {
-				console.log('Unknown Layer:', layer);
-				layer = 'Unknown Layer';
-			}
+			const layer = d.data.layer;
 			layerCount[layer] += d.data.count;
 			total += d.data.count;
 		});
@@ -181,6 +196,15 @@ export default function drawPack(
 		}
 	});
 
+	// TODO: parameterize?
+	const colorMap: {[key:string]:string} = {
+		'Presentation Layer': '#fb8072', 
+		'Service Layer': '#ffffb3', 
+		'Domain Layer': '#8dd3c7', 
+		'Data Source Layer': '#bebada',
+		'Unknown Layer': '#525252'
+	}
+
 	// RENDER LAYER
 	const layerWidth = maxWidth + PADDING_X_LAYER;
 	layers.forEach((layer, i) => {
@@ -190,20 +214,7 @@ export default function drawPack(
 			.attr('y', i * layerHeight)
 			.attr('width', layerWidth)
 			.attr('height', layerHeight)
-			.attr('fill', () => {
-				// based on data.layer
-				if (layer === 'Data Source Layer') {
-					return 'rgba(0, 0, 100, 0.2)';
-				} else if (layer === 'Domain Layer') {
-					return 'rgba(0, 100, 0, 0.2)';
-				} else if (layer === 'Presentation Layer') {
-					return 'rgba(100, 0, 0, 0.2)';
-				} else if (layer === 'Service Layer') {
-					return 'rgba(100, 100, 0, 0.2)';
-				} else {
-					return 'rgba(0, 0, 0, 0)';
-				}
-			})
+			.attr('fill', () => { return adjustHexColor(colorMap[layer] ?? '#cccccc', 0.4) })
 			.attr('stroke', 'black');
 
 		canvas
@@ -243,20 +254,7 @@ export default function drawPack(
 			node
 				.append('circle')
 				.attr('r', d.r)
-				.attr('fill', () => {
-					// based on data.layer
-					if (d?.data?.layer === 'Data Source Layer') {
-						return 'rgba(0, 0, 100, 0.2)';
-					} else if (d?.data?.layer === 'Domain Layer') {
-						return 'rgba(0, 100, 0, 0.2)';
-					} else if (d?.data?.layer === 'Presentation Layer') {
-						return 'rgba(100, 0, 0, 0.2)';
-					} else if (d?.data?.layer === 'Service Layer') {
-						return 'rgba(100, 100, 0, 0.2)';
-					} else {
-						return 'rgba(0, 0, 0, 0)';
-					}
-				})
+				.attr('fill', () => { return adjustHexColor(colorMap[d?.data?.layer] ?? '#cccccc', -0.4) })
 				.attr('stroke', 'black');
 
 			node.on('mouseover', function () {
