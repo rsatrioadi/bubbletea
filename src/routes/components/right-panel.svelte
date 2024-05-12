@@ -39,6 +39,7 @@
 			for (const cls in classes) {
 				const rows = classes[cls];
 			
+				// TODO: should we differentiate length=1?
 				if (rows.length > 1) {
 
 					// add instances with their respective layers and counts
