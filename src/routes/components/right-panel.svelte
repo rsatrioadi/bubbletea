@@ -45,8 +45,9 @@
 					// add instances with their respective layers and counts
 					rows.forEach((row: { count: any; layer: any; }, index: any) => {
 						temporaryTable.push({
-							class: `${cls}-child${index + 1}`,
-							package: cls,
+							id: `${cls}-child${index + 1}`,
+							parent: cls,
+							kind: 'layer_info',
 							count: row.count,
 							layer: row.layer
 						});
@@ -54,8 +55,9 @@
 
 					// append parent class
 					temporaryTable.push({
-						class: cls,
-						package: pkg,
+						id: cls,
+						parent: pkg,
+						kind: 'class',
 						count: 0,
 						layer: ''
 					});
@@ -63,8 +65,9 @@
 				} else {
 					
 					temporaryTable.push({
-						class: cls,
-						package: pkg,
+						id: cls,
+						parent: pkg,
+						kind: 'class',
 						count: rows[0].count,
 						layer: rows[0].layer
 					});
@@ -73,8 +76,9 @@
 		
 			// append package
 			temporaryTable.push({
-				class: pkg,
-				package: '',
+				id: pkg,
+				parent: '',
+				kind: 'package',
 				count: 0,
 				layer: ''
 			});
@@ -87,8 +91,8 @@
 			// turn to d3 hierarchy
 			const root = d3
 				.stratify()
-				.id((d: any) => d.class)
-				.parentId((d: any) => d.package)(temporaryTable);
+				.id((d: any) => d.id)
+				.parentId((d: any) => d.parent)(temporaryTable);
 
 			// temporary, limit to two
 
