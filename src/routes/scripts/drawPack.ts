@@ -205,6 +205,40 @@ export default function drawPack(
 		'Unknown Layer': '#525252'
 	}
 
+	const defs = canvas.append("svg:defs");
+		
+	Object.entries(colorMap).forEach(([key, value]) => {
+		const grad = defs.append("svg:radialGradient")
+			.attr("gradientUnits", "objectBoundingBox")
+			.attr("cx", "25%")
+			.attr("cy", "25%")
+			.attr("r", "100%")
+			.attr("id", "grad"+key.split(' ').join(''));
+
+		grad.append("stop")
+			.attr("offset", "0%")
+			.style("stop-color", "white");
+
+		grad.append("stop")
+			.attr("offset", "75%")
+			.style("stop-color",  adjustHexColor(value,-0.8));
+	});
+
+	const grad = defs.append("svg:radialGradient")
+		.attr("gradientUnits", "objectBoundingBox")
+		.attr("cx", "25%")
+		.attr("cy", "25%")
+		.attr("r", "100%")
+		.attr("id", "gradElse");
+
+	grad.append("stop")
+		.attr("offset", "0%")
+		.style("stop-color", "#666666");
+
+	grad.append("stop")
+		.attr("offset", "75%")
+		.style("stop-color", "#cccccc");
+
 	// RENDER LAYER
 	const layerWidth = maxWidth + PADDING_X_LAYER;
 	layers.forEach((layer, i) => {
@@ -254,7 +288,7 @@ export default function drawPack(
 			node
 				.append('circle')
 				.attr('r', d.r)
-				.attr('fill', () => adjustHexColor(colorMap[d?.data?.layer] ?? '#cccccc', -0.4))
+				.attr('fill', "url(#grad"+(d.data?.layer?.split(' ')?.join('')??'Else')+")")
 				.attr('stroke', 'black');
 
 			node.on('mouseover', function () {

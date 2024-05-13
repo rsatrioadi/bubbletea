@@ -59,7 +59,7 @@
 						parent: pkg,
 						kind: 'class',
 						count: 0,
-						layer: ''
+						layer: undefined
 					});
 
 				} else {
@@ -80,7 +80,7 @@
 				parent: '',
 				kind: 'package',
 				count: 0,
-				layer: ''
+				layer: undefined
 			});
 
 			nodes.push(temporaryTable);
