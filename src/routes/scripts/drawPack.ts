@@ -34,9 +34,9 @@ export default function drawPack(
 	writeDetailHover: (detail: string) => void
 ) {
 	const layerCountProto: any = layers.reduce((obj: {[key: string]: number}, item: string) => {
-		obj[item] = 0;
-		return obj;
-	}, {'Unknown Layer': 0});
+			obj[item] = 0;
+			return obj;
+		}, {'Unknown Layer': 0});
 	// COMPUTE
 	roots.forEach((root) => {
 		// 1. Compute the pack layout.
