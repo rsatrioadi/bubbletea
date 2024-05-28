@@ -6,105 +6,11 @@
 	import * as d3 from 'd3';
 
 	export let hoverDetail = '';
-	export let roots: any[] = [];
+	export let table: d3.DSVRowArray<string>;
 
 	function inputDataToHierarchyData(csvText: string): any {
 		// package, class, layer, count
-		const table = d3.csvParse(csvText);
-
-		// TODO: parameterize
-		const validLayers = [
-			'Presentation Layer',
-			'Service Layer',
-			'Domain Layer',
-			'Data Source Layer'
-		];
-
-		// normalize invalid layers
-		table.forEach((row) => {
-			if (!validLayers.includes(row.layer)) {
-				row.layer = 'Unknown Layer';
-			}
-		});
-
-		const obj: any = {};
-
-		table.forEach(({ package: pkg, class: cls, layer, count: cstr }) => {
-			const count = parseFloat(cstr);
-			if (!obj[pkg]) {
-				obj[pkg] = {};
-			}
-			if (!obj[pkg][cls]) {
-				obj[pkg][cls] = [];
-			}
-			obj[pkg][cls].push({ layer, count });
-		});
-
-		const nodes: any = [];
-
-		for (const pkg in obj) {
-			const classes = obj[pkg];
-			const temporaryTable: any = [];
-
-			for (const cls in classes) {
-				const rows = classes[cls];
-
-				// TODO: should we differentiate length=1?
-				if (rows.length > 1) {
-					// add instances with their respective layers and counts
-					rows.forEach((row: { count: any; layer: any }, index: any) => {
-						temporaryTable.push({
-							id: `${cls}-child${index + 1}`,
-							parent: cls,
-							kind: 'layer_info',
-							count: row.count,
-							layer: row.layer
-						});
-					});
-
-					// append parent class
-					temporaryTable.push({
-						id: cls,
-						parent: pkg,
-						kind: 'class',
-						count: 0,
-						layer: undefined
-					});
-				} else {
-					temporaryTable.push({
-						id: cls,
-						parent: pkg,
-						kind: 'class',
-						count: rows[0].count,
-						layer: rows[0].layer
-					});
-				}
-			}
-
-			// append package
-			temporaryTable.push({
-				id: pkg,
-				parent: '',
-				kind: 'package',
-				count: 0,
-				layer: undefined
-			});
-
-			nodes.push(temporaryTable);
-		}
-
-		roots = [];
-		nodes.forEach((temporaryTable: unknown[]) => {
-			// turn to d3 hierarchy
-			const root = d3
-				.stratify()
-				.id((d: any) => d.id)
-				.parentId((d: any) => d.parent)(temporaryTable);
-
-			// temporary, limit to two
-
-			roots.push(root);
-		});
+		table = d3.csvParse(csvText);
 	}
 
 	function handleFileChange(e: any) {

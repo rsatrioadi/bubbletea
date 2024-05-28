@@ -5,6 +5,7 @@
 	import * as Resizable from '$lib/components/ui/resizable';
 	import layoutPack from './scripts/layoutPack';
 	import { renderLayer, renderPack } from './scripts/renderPack';
+	import { turnTableToHierarchyData } from './scripts/turnTableToHierarchyData';
 	let svgElement: SVGElement;
 
 	type HierarchyData = {
@@ -29,7 +30,9 @@
 			}
 		]
 	};
+
 	let roots = [d3.hierarchy(data) as any];
+	let table: d3.DSVRowArray<string>;
 
 	function writeDetailHover(detail: string) {
 		hoverDetail = detail;
@@ -48,10 +51,14 @@
 					canvas.attr('transform', transform);
 				})
 			);
-
+			if (table) {
+				roots = turnTableToHierarchyData(table);
+			}
 			// TODO: maybe we can add another way of drawing?
 			// Construct the treemap layout.
 			layoutPack(roots);
+
+			// doFilter();
 			renderLayer(canvas, roots);
 			renderPack(canvas, roots, writeDetailHover);
 		}
@@ -71,7 +78,7 @@
 		<Resizable.Handle />
 		<!-- right -->
 		<Resizable.Pane class="pl-4">
-			<RightPanel {hoverDetail} bind:roots />
+			<RightPanel {hoverDetail} bind:table />
 		</Resizable.Pane>
 	</Resizable.PaneGroup>
 </div>
