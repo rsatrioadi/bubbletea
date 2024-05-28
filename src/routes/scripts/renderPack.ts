@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // TODO: remove above line
 import { adjustHexColor } from '$lib';
+import { colorMap, LAYER_SIZE_MULTIPLIER, layers, PADDING_X_LAYER } from '$lib/constant';
 import * as d3 from 'd3';
-const PADDING_X_LAYER = 100;
-const layers = ['Presentation Layer', 'Service Layer', 'Domain Layer', 'Data Source Layer'];
 
 export function renderLayer(
 	canvas: d3.Selection<SVGGElement, unknown, null, undefined>,
@@ -16,16 +15,8 @@ export function renderLayer(
 		return acc;
 	});
 
-	// arbitrary layer height: 3 times the biggest root radius
-	const layerHeight = biggestRootRadius.r * 3;
+	const layerHeight = biggestRootRadius.r * LAYER_SIZE_MULTIPLIER;
 	// TODO: parameterize?
-	const colorMap: { [key: string]: string } = {
-		'Presentation Layer': '#fb8072',
-		'Service Layer': '#ffffb3',
-		'Domain Layer': '#8dd3c7',
-		'Data Source Layer': '#bebada',
-		'Unknown Layer': '#525252'
-	};
 
 	const defs = canvas.append('svg:defs');
 

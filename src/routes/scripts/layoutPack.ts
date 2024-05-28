@@ -1,11 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // TODO: remove above line
-const FACTOR = 100;
-const PADDING_INNER_PACK = 2;
-const PADDING_INTER_PACK = 10; // must be more than 1
-const PADDING_X_LAYER = 100;
+
+import {
+	FACTOR,
+	LAYER_SIZE_MULTIPLIER,
+	layers,
+	PADDING_INNER_PACK,
+	PADDING_INTER_PACK,
+	PADDING_X_LAYER
+} from '$lib/constant';
 import * as d3 from 'd3';
-const layers = ['Presentation Layer', 'Service Layer', 'Domain Layer', 'Data Source Layer'];
 
 export default function layoutPack(roots: any[]) {
 	const layerCountProto: any = layers.reduce(
@@ -44,7 +48,7 @@ export default function layoutPack(roots: any[]) {
 			return acc;
 		}, {});
 
-		// find the dominants layer, and remove non dominant layer.
+		// 3. find the dominants layer, and remove non dominant layer.
 		/*
 		step
 		1. sort the layerPercentage from highest to lowest
@@ -73,25 +77,11 @@ export default function layoutPack(roots: any[]) {
 
 		// attach the layerPercentage to the root
 		root.data.dominantLayer = dominantLayer;
-		// root.data.layerPercentageArray = layerPercentageArray;
 	});
 
-	// CALCULATE LAYOUT
-	// draw the layer as rectangle
-	// height is the biggest pack size
-	const biggestRootRadius = roots.reduce((acc, root) => {
-		if (acc.value < root.value) {
-			return root;
-		}
-		return acc;
-	});
-
-	// arbitrary layer height: 3 times the biggest root radius
-	const layerHeight = biggestRootRadius.r * 3;
-	// find the y for each root based on the dominantLayer
-
+	// DETERMINE X AND Y - CALCULATE LAYOUT
 	// draw each package (which is represented by a root)
-	calculateRootsLocationBasedOnDominantLayer(roots, layerHeight);
+	calculateRootsLocationBasedOnDominantLayer(roots);
 }
 
 type Circle = {
@@ -118,8 +108,18 @@ function findMoveNeededInXForCircle2(circle1: Circle, circle2: Circle) {
 	return moveNeeded;
 }
 
-function calculateRootsLocationBasedOnDominantLayer(roots: any[], layerHeight: number) {
+function calculateRootsLocationBasedOnDominantLayer(roots: any[]) {
 	const previousRoots: any = [];
+	// height is the biggest pack size
+	const biggestRootRadius = roots.reduce((acc, root) => {
+		if (acc.value < root.value) {
+			return root;
+		}
+		return acc;
+	});
+
+	// arbitrary layer height: 3 times the biggest root radius
+	const layerHeight = biggestRootRadius.r * LAYER_SIZE_MULTIPLIER;
 	roots.forEach((root) => {
 		const dominantLayer = root.data.dominantLayer;
 		/*
