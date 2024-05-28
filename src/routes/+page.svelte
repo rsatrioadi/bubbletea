@@ -61,7 +61,6 @@
 				if (table) {
 					roots = turnTableToHierarchyData(table);
 				}
-				// TODO: maybe we can add another way of drawing?
 				// Construct the treemap layout.
 				layoutPack(roots);
 
