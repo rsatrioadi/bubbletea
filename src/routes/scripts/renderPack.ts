@@ -78,7 +78,8 @@ export function renderLayer(
 export function renderPack(
 	canvas: d3.Selection<SVGGElement, unknown, null, undefined>,
 	roots: any[],
-	writeDetailHover: (detail: string) => void
+	writeDetailHover: (detail: string) => void,
+	handleRootClick: (root: any) => void
 ) {
 	let maxWidth = 0;
 	roots.forEach((root) => {
@@ -90,6 +91,9 @@ export function renderPack(
 	const layerWidth = maxWidth + PADDING_X_LAYER;
 	// RENDER PACKS
 	roots.forEach((root, index: number) => {
+		if (root.isHidden) {
+			return;
+		}
 		const containerElement = canvas
 			.append('g')
 			.attr('transform', `translate(${root.containerX},${root.containerY})`)
@@ -143,12 +147,13 @@ export function renderPack(
 			});
 
 			node.on('mouseout', function () {
-				console.log('mouseout');
 				writeDetailHover('{}');
 				d3.select(this).select('circle').attr('stroke-width', 1);
 			});
 
-			node.on('click', function () {});
+			node.on('click', function () {
+				handleRootClick(root);
+			});
 
 			node.on('contextmenu', (event, d) => {
 				event.preventDefault();
