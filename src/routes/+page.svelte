@@ -3,7 +3,8 @@
 	import * as d3 from 'd3';
 	import RightPanel from './components/right-panel.svelte';
 	import * as Resizable from '$lib/components/ui/resizable';
-	import drawPack from './scripts/drawPack';
+	import layoutPack from './scripts/layoutPack';
+	import { renderLayer, renderPack } from './scripts/renderPack';
 	let svgElement: SVGElement;
 
 	type HierarchyData = {
@@ -50,7 +51,9 @@
 
 			// TODO: maybe we can add another way of drawing?
 			// Construct the treemap layout.
-			drawPack(canvas, roots, writeDetailHover);
+			layoutPack(roots);
+			renderLayer(canvas, roots);
+			renderPack(canvas, roots, writeDetailHover);
 		}
 	}
 	onMount(() => {
@@ -61,7 +64,7 @@
 <div class="border- h-full w-full">
 	<Resizable.PaneGroup direction="horizontal">
 		<!-- left -->
-		<Resizable.Pane class="p-4" defaultSize={85}>
+		<Resizable.Pane class="p-4" defaultSize={75}>
 			<svg bind:this={svgElement} class="h-full w-full" width="100%" />
 		</Resizable.Pane>
 		<!-- handle -->
