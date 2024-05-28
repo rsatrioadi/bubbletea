@@ -143,7 +143,8 @@ export function renderPack(
 			});
 
 			node.on('mouseout', function () {
-				writeDetailHover('');
+				console.log('mouseout');
+				writeDetailHover('{}');
 				d3.select(this).select('circle').attr('stroke-width', 1);
 			});
 

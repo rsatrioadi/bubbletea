@@ -6,6 +6,8 @@
 	import layoutPack from './scripts/layoutPack';
 	import { renderLayer, renderPack } from './scripts/renderPack';
 	import { turnTableToHierarchyData } from './scripts/turnTableToHierarchyData';
+	import * as Tabs from '$lib/components/ui/tabs';
+	import HierarchyTable from './components/hierarchy-table.svelte';
 	let svgElement: SVGElement;
 
 	type HierarchyData = {
@@ -72,12 +74,23 @@
 	<Resizable.PaneGroup direction="horizontal">
 		<!-- left -->
 		<Resizable.Pane class="p-4" defaultSize={75}>
-			<svg bind:this={svgElement} class="h-full w-full" width="100%" />
+			<Tabs.Root value="pack" class="h-full">
+				<Tabs.List>
+					<Tabs.Trigger value="pack">Pack</Tabs.Trigger>
+					<Tabs.Trigger value="table">Table</Tabs.Trigger>
+				</Tabs.List>
+				<Tabs.Content value="pack" class="h-full">
+					<svg bind:this={svgElement} class="h-full w-full" width="100%" />
+				</Tabs.Content>
+				<Tabs.Content value="table" class="h-full overflow-auto">
+					<HierarchyTable {table} />
+				</Tabs.Content>
+			</Tabs.Root>
 		</Resizable.Pane>
 		<!-- handle -->
 		<Resizable.Handle />
 		<!-- right -->
-		<Resizable.Pane class="pl-4">
+		<Resizable.Pane class="pl-4" minSize={20}>
 			<RightPanel {hoverDetail} bind:table />
 		</Resizable.Pane>
 	</Resizable.PaneGroup>
