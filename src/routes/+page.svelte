@@ -46,6 +46,16 @@
 	$: {
 		if (isMounted) {
 			if (doRecalculateHierarchyData) {
+				if (table) {
+					roots = turnTableToHierarchyData(table);
+				}
+				// Construct the treemap layout.
+				layoutPack(roots);
+
+				doRecalculateHierarchyData = false;
+				doRerender = true;
+			}
+			if (doRerender) {
 				if (svgElement) {
 					// clean
 					d3.select(svgElement).selectChildren().remove();
@@ -58,17 +68,6 @@
 						canvas.attr('transform', transform);
 					})
 				);
-				if (table) {
-					roots = turnTableToHierarchyData(table);
-				}
-				// Construct the treemap layout.
-				layoutPack(roots);
-
-				doRecalculateHierarchyData = false;
-				doRerender = true;
-			}
-			if (doRerender) {
-				console.log('doRerender');
 				renderLayer(canvas, roots);
 				renderPack(canvas, roots, writeDetailHover, handleRootClick);
 				doRerender = false;
