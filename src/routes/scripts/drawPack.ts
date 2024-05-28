@@ -34,9 +34,9 @@ export default function drawPack(
 	writeDetailHover: (detail: string) => void
 ) {
 	const layerCountProto: any = layers.reduce((obj: {[key: string]: number}, item: string) => {
-		obj[item] = 0;
-		return obj;
-	}, {'Unknown Layer': 0});
+			obj[item] = 0;
+			return obj;
+		}, {'Unknown Layer': 0});
 	// COMPUTE
 	roots.forEach((root) => {
 		// 1. Compute the pack layout.
@@ -62,9 +62,9 @@ export default function drawPack(
 		});
 
 		const layerPercentage = Object.keys(layerCount).reduce((acc: any, key) => {
-			acc[key] = (layerCount[key] / total) * 100;
-			return acc;
-		}, {});
+				acc[key] = (layerCount[key] / total) * 100;
+				return acc;
+			}, {});
 
 		// find the dominants layer, and remove non dominant layer.
 		/*
@@ -205,6 +205,40 @@ export default function drawPack(
 		'Unknown Layer': '#525252'
 	}
 
+	const defs = canvas.append("svg:defs");
+		
+	Object.entries(colorMap).forEach(([key, value]) => {
+		const grad = defs.append("svg:radialGradient")
+			.attr("gradientUnits", "objectBoundingBox")
+			.attr("cx", "25%")
+			.attr("cy", "25%")
+			.attr("r", "100%")
+			.attr("id", "grad"+key.split(' ').join(''));
+
+		grad.append("stop")
+			.attr("offset", "0%")
+			.style("stop-color", "white");
+
+		grad.append("stop")
+			.attr("offset", "75%")
+			.style("stop-color",  adjustHexColor(value,-0.8));
+	});
+
+	const grad = defs.append("svg:radialGradient")
+		.attr("gradientUnits", "objectBoundingBox")
+		.attr("cx", "25%")
+		.attr("cy", "25%")
+		.attr("r", "100%")
+		.attr("id", "gradElse");
+
+	grad.append("stop")
+		.attr("offset", "0%")
+		.style("stop-color", "#666666");
+
+	grad.append("stop")
+		.attr("offset", "75%")
+		.style("stop-color", "#cccccc");
+
 	// RENDER LAYER
 	const layerWidth = maxWidth + PADDING_X_LAYER;
 	layers.forEach((layer, i) => {
@@ -214,7 +248,7 @@ export default function drawPack(
 			.attr('y', i * layerHeight)
 			.attr('width', layerWidth)
 			.attr('height', layerHeight)
-			.attr('fill', () => { return adjustHexColor(colorMap[layer] ?? '#cccccc', 0.4) })
+			.attr('fill', () => adjustHexColor(colorMap[layer] ?? '#cccccc', 0.4))
 			.attr('stroke', 'black');
 
 		canvas
@@ -223,7 +257,7 @@ export default function drawPack(
 			.attr('y', i * layerHeight + 15)
 			.attr('fill', 'black')
 			.attr('text-anchor', 'start')
-			.attr('font-size', '10px')
+			.attr('font-size', '14px')
 			.text(layer);
 	});
 
@@ -254,7 +288,7 @@ export default function drawPack(
 			node
 				.append('circle')
 				.attr('r', d.r)
-				.attr('fill', () => { return adjustHexColor(colorMap[d?.data?.layer] ?? '#cccccc', -0.4) })
+				.attr('fill', "url(#grad"+(d.data?.layer?.split(' ')?.join('')??'Else')+")")
 				.attr('stroke', 'black');
 
 			node.on('mouseover', function () {
@@ -269,13 +303,15 @@ export default function drawPack(
 				d3.select(this).select('circle').attr('stroke-width', 1);
 			});
 
-			node
-				.append('text')
-				.attr('dy', '0.3em')
-				.attr('fill', 'black')
-				.attr('text-anchor', 'middle')
-				.attr('font-size', '10px')
-				.text(d.data.id);
+			if (d.data.kind === 'package') {
+				node
+					.append('text')
+					.attr('dy', -d.r-4)
+					.attr('fill', 'black')
+					.attr('text-anchor', 'middle')
+					.attr('font-size', '12px')
+					.text(d.data.id);
+			}
 		});
 	});
 }
