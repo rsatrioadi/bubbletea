@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // TODO: remove above line
-const FACTOR = 100;
+const FACTOR = 200;
 const PADDING_INNER_PACK = 2;
 const PADDING_INTER_PACK = 10; // must be more than 1
 const PADDING_X_LAYER = 100;
@@ -47,7 +47,7 @@ export default function drawPack(
 		root.sum((d: any) => d.count);
 
 		// determine the max size of the root based on its value
-		const size = Math.sqrt(Math.sqrt(root.value)) * FACTOR; // make it non linear
+		const size = Math.log10(root.value+1) * FACTOR; // make it non linear
 		pack.size([size, size]);
 
 		pack(root);
@@ -198,11 +198,11 @@ export default function drawPack(
 
 	// TODO: parameterize?
 	const colorMap: {[key:string]:string} = {
-		'Presentation Layer': '#fb8072', 
-		'Service Layer': '#ffffb3', 
-		'Domain Layer': '#8dd3c7', 
-		'Data Source Layer': '#bebada',
-		'Unknown Layer': '#525252'
+		'Presentation Layer': '#ee3239',//'#fb8072', 
+		'Service Layer': '#fece00',//'#ffffb3', 
+		'Domain Layer': '#5eaa5f',//'#8dd3c7', 
+		'Data Source Layer': '#6A6DBA',//'#bebada',
+		'Unknown Layer': '#101010'
 	}
 
 	const defs = canvas.append("svg:defs");
@@ -221,7 +221,7 @@ export default function drawPack(
 
 		grad.append("stop")
 			.attr("offset", "75%")
-			.style("stop-color",  adjustHexColor(value,-0.8));
+			.style("stop-color",  adjustHexColor(value,-0.1));
 	});
 
 	const grad = defs.append("svg:radialGradient")
@@ -233,11 +233,11 @@ export default function drawPack(
 
 	grad.append("stop")
 		.attr("offset", "0%")
-		.style("stop-color", "#666666");
+		.style("stop-color", "#D9B299");
 
 	grad.append("stop")
 		.attr("offset", "75%")
-		.style("stop-color", "#cccccc");
+		.style("stop-color", "#ecd8cc");
 
 	// RENDER LAYER
 	const layerWidth = maxWidth + PADDING_X_LAYER;
@@ -248,7 +248,7 @@ export default function drawPack(
 			.attr('y', i * layerHeight)
 			.attr('width', layerWidth)
 			.attr('height', layerHeight)
-			.attr('fill', () => adjustHexColor(colorMap[layer] ?? '#cccccc', 0.4))
+			.attr('fill', () => adjustHexColor(colorMap[layer] ?? '#cccccc', 0.7))
 			.attr('stroke', 'black');
 
 		canvas
@@ -260,6 +260,22 @@ export default function drawPack(
 			.attr('font-size', '14px')
 			.text(layer);
 	});
+	canvas
+		.append('rect')
+		.attr('x', maxWidth + PADDING_X_LAYER)
+		.attr('y', 0)
+		.attr('width', layerHeight)
+		.attr('height', 4*layerHeight)
+		.attr('fill', adjustHexColor(colorMap['Unknown Layer'], 0.7))
+		.attr('stroke', 'black');
+	canvas
+		.append('text')
+		.attr('x', maxWidth + PADDING_X_LAYER + 5)
+		.attr('y', 15)
+		.attr('fill', 'black')
+		.attr('text-anchor', 'start')
+		.attr('font-size', '14px')
+		.text('Not classified');
 
 	// RENDER PACKS
 	roots.forEach((root, index: number) => {

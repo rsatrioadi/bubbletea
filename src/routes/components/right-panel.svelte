@@ -39,9 +39,6 @@
 			for (const cls in classes) {
 				const rows = classes[cls];
 			
-				// TODO: should we differentiate length=1?
-				if (rows.length > 1) {
-
 					// add instances with their respective layers and counts
 					rows.forEach((row: { count: any; layer: any; }, index: any) => {
 						temporaryTable.push({
@@ -62,16 +59,6 @@
 						layer: undefined
 					});
 
-				} else {
-					
-					temporaryTable.push({
-						id: cls,
-						parent: pkg,
-						kind: 'class',
-						count: rows[0].count,
-						layer: rows[0].layer
-					});
-				}
 			}
 		
 			// append package
