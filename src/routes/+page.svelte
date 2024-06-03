@@ -3,54 +3,75 @@
 	import * as d3 from 'd3';
 	import RightPanel from './components/right-panel.svelte';
 	import * as Resizable from '$lib/components/ui/resizable';
-	import drawPack from './scripts/drawPack';
+	import layoutPack from './scripts/layoutPack';
+	import { renderLayer, renderPack } from './scripts/renderPack';
+	import { turnTableToHierarchyData } from './scripts/turnTableToHierarchyData';
+	import * as Tabs from '$lib/components/ui/tabs';
+	import HierarchyTable from './components/hierarchy-table.svelte';
+	import type { HierarchyData } from '$lib/type';
 	let svgElement: SVGElement;
-
-	type HierarchyData = {
-		count: number;
-		package?: string;
-		class?: string;
-		layer?: string;
-		children?: HierarchyData[];
-	};
 
 	let isMounted = false;
 	let hoverDetail = '';
 	const data: HierarchyData = {
 		class: 'App',
 		count: 0,
+		id: 'App',
 		children: [
 			{
 				package: 'com.fsck.k9.account',
 				class: 'com.fsck.k9.account.AccountCreator',
 				layer: 'Presentation Layer',
+				id: 'com.fsck.k9.account.AccountCreator',
 				count: 1
 			}
 		]
 	};
-	let roots = [d3.hierarchy(data) as any];
 
+	let roots = [d3.hierarchy(data) as any];
+	let table: d3.DSVRowArray<string>;
+	let canvas: any;
+
+	let doRecalculateHierarchyData = true;
+	let doRerender = false;
+
+	let rootInFocus: HierarchyData | null = null;
 	function writeDetailHover(detail: string) {
 		hoverDetail = detail;
 	}
+	function handleRootClick(root: HierarchyData) {
+		console.log('root', root);
+		rootInFocus = root;
+	}
 	$: {
 		if (isMounted) {
-			if (svgElement) {
-				// clean
-				d3.select(svgElement).selectChildren().remove();
+			if (doRecalculateHierarchyData) {
+				if (table) {
+					roots = turnTableToHierarchyData(table);
+				}
+				// Construct the treemap layout.
+				layoutPack(roots);
+
+				doRecalculateHierarchyData = false;
+				doRerender = true;
 			}
+			if (doRerender) {
+				if (svgElement) {
+					// clean
+					d3.select(svgElement).selectChildren().remove();
+				}
 
-			// setup canvas
-			const canvas = d3.select(svgElement).append('g').attr('id', 'canvas');
-			d3.select(svgElement).call(
-				d3.zoom<SVGElement, unknown>().on('zoom', ({ transform }) => {
-					canvas.attr('transform', transform);
-				})
-			);
-
-			// TODO: maybe we can add another way of drawing?
-			// Construct the treemap layout.
-			drawPack(canvas, roots, writeDetailHover);
+				// setup canvas
+				canvas = d3.select(svgElement).append('g').attr('id', 'canvas');
+				d3.select(svgElement).call(
+					d3.zoom<SVGElement, unknown>().on('zoom', ({ transform }) => {
+						canvas.attr('transform', transform);
+					})
+				);
+				renderLayer(canvas, roots);
+				renderPack(canvas, roots, writeDetailHover, handleRootClick);
+				doRerender = false;
+			}
 		}
 	}
 	onMount(() => {
@@ -58,17 +79,35 @@
 	});
 </script>
 
-<div class="border- h-full w-full">
+<div class="border- mb-4 h-full w-full">
 	<Resizable.PaneGroup direction="horizontal">
 		<!-- left -->
-		<Resizable.Pane class="p-4" defaultSize={85}>
-			<svg bind:this={svgElement} class="h-full w-full" width="100%" />
+		<Resizable.Pane class="p-4" defaultSize={75}>
+			<Tabs.Root value="pack" class="h-full">
+				<Tabs.List>
+					<Tabs.Trigger value="pack">Pack</Tabs.Trigger>
+					<Tabs.Trigger value="table">Table</Tabs.Trigger>
+				</Tabs.List>
+				<Tabs.Content value="pack" class="h-full">
+					<svg bind:this={svgElement} class="h-full w-full" width="100%" />
+				</Tabs.Content>
+				<Tabs.Content value="table" class="h-full overflow-auto">
+					<HierarchyTable {table} />
+				</Tabs.Content>
+			</Tabs.Root>
 		</Resizable.Pane>
 		<!-- handle -->
 		<Resizable.Handle />
 		<!-- right -->
-		<Resizable.Pane class="pl-4">
-			<RightPanel {hoverDetail} bind:roots />
+		<Resizable.Pane class="pl-4" minSize={20}>
+			<RightPanel
+				{hoverDetail}
+				bind:table
+				bind:rootInFocus
+				bind:doRecalculateHierarchyData
+				bind:roots
+				bind:doRerender
+			/>
 		</Resizable.Pane>
 	</Resizable.PaneGroup>
 </div>
