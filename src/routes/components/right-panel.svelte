@@ -45,7 +45,7 @@
 </script>
 
 <div class="mr-2 h-full">
-	<div class="mt-2 text-3xl font-bold">Pack Visualization</div>
+	<div class="mt-2 text-3xl font-bold">BubbleTea Viz</div>
 	<Resizable.PaneGroup direction="vertical">
 		<!-- first section -->
 		<Resizable.Pane class="pt-4" defaultSize={10} minSize={10}>
