@@ -1,12 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // TODO: remove above line
-import { adjustHexColor } from '$lib';
-import { colorMap, LAYER_SIZE_MULTIPLIER, layers, PADDING_X_LAYER } from '$lib/constant';
-import * as d3 from 'd3';
+import { adjustHexColor } from "$lib";
+import {
+	colorMap,
+	LAYER_SIZE_MULTIPLIER,
+	layers,
+	PADDING_X_LAYER,
+} from "$lib/constant";
+import * as d3 from "d3";
 
 export function renderLayer(
 	canvas: d3.Selection<SVGGElement, unknown, null, undefined>,
-	roots: any[]
+	roots: any[],
 ) {
 	const biggestRootRadius = roots.reduce((acc, root) => {
 		if (acc.value < root.value) {
@@ -17,33 +22,36 @@ export function renderLayer(
 
 	const layerHeight = biggestRootRadius.r * LAYER_SIZE_MULTIPLIER;
 
-	const defs = canvas.append('svg:defs');
+	const defs = canvas.append("svg:defs");
 
 	Object.entries(colorMap).forEach(([key, value]) => {
 		const grad = defs
-			.append('svg:radialGradient')
-			.attr('gradientUnits', 'objectBoundingBox')
-			.attr('cx', '25%')
-			.attr('cy', '25%')
-			.attr('r', '100%')
-			.attr('id', 'grad' + key.split(' ').join(''));
+			.append("svg:radialGradient")
+			.attr("gradientUnits", "objectBoundingBox")
+			.attr("cx", "25%")
+			.attr("cy", "25%")
+			.attr("r", "100%")
+			.attr("id", "grad" + key.split(" ").join(""));
 
-		grad.append('stop').attr('offset', '0%').style('stop-color', 'white');
+		grad.append("stop").attr("offset", "0%").style("stop-color", "white");
 
-		grad.append('stop').attr('offset', '75%').style('stop-color', adjustHexColor(value, -0.1));
+		grad.append("stop").attr("offset", "75%").style(
+			"stop-color",
+			adjustHexColor(value, -0.1),
+		);
 	});
 
 	const grad = defs
-		.append('svg:radialGradient')
-		.attr('gradientUnits', 'objectBoundingBox')
-		.attr('cx', '25%')
-		.attr('cy', '25%')
-		.attr('r', '100%')
-		.attr('id', 'gradElse');
+		.append("svg:radialGradient")
+		.attr("gradientUnits", "objectBoundingBox")
+		.attr("cx", "25%")
+		.attr("cy", "25%")
+		.attr("r", "100%")
+		.attr("id", "gradElse");
 
-	grad.append('stop').attr('offset', '0%').style('stop-color', '#D9B299');
+	grad.append("stop").attr("offset", "0%").style("stop-color", "#D9B299");
 
-	grad.append('stop').attr('offset', '75%').style('stop-color', '#ecd8cc');
+	grad.append("stop").attr("offset", "75%").style("stop-color", "#ecd8cc");
 
 	// calculate max width
 	let maxWidth = 0;
@@ -56,45 +64,45 @@ export function renderLayer(
 	const layerWidth = maxWidth + PADDING_X_LAYER;
 	layers.forEach((layer, i) => {
 		canvas
-			.append('rect')
-			.attr('x', 0)
-			.attr('y', i * layerHeight)
-			.attr('width', layerWidth)
-			.attr('height', layerHeight)
-			.attr('fill', () => adjustHexColor(colorMap[layer] ?? '#cccccc', 0.7))
-			.attr('stroke', 'black');
+			.append("rect")
+			.attr("x", 0)
+			.attr("y", i * layerHeight)
+			.attr("width", layerWidth)
+			.attr("height", layerHeight)
+			.attr("fill", () => adjustHexColor(colorMap[layer] ?? "#cccccc", 0.7))
+			.attr("stroke", "black");
 
 		canvas
-			.append('text')
-			.attr('x', 5)
-			.attr('y', i * layerHeight + 15)
-			.attr('fill', 'black')
-			.attr('text-anchor', 'start')
-			.attr('font-size', '14px')
+			.append("text")
+			.attr("x", 5)
+			.attr("y", i * layerHeight + 15)
+			.attr("fill", "black")
+			.attr("text-anchor", "start")
+			.attr("font-size", "14px")
 			.text(layer);
 	});
 	canvas
-		.append('rect')
-		.attr('x', maxWidth + PADDING_X_LAYER)
-		.attr('y', 0)
-		.attr('width', layerHeight)
-		.attr('height', 4*layerHeight)
-		.attr('fill', adjustHexColor(colorMap['Unknown Layer'], 0.7))
-		.attr('stroke', 'black');
+		.append("rect")
+		.attr("x", maxWidth + PADDING_X_LAYER)
+		.attr("y", 0)
+		.attr("width", layerHeight)
+		.attr("height", 4 * layerHeight)
+		.attr("fill", adjustHexColor(colorMap["Unknown Layer"], 0.7))
+		.attr("stroke", "black");
 	canvas
-		.append('text')
-		.attr('x', maxWidth + PADDING_X_LAYER + 5)
-		.attr('y', 15)
-		.attr('fill', 'black')
-		.attr('text-anchor', 'start')
-		.attr('font-size', '14px')
-		.text('Not classified');
+		.append("text")
+		.attr("x", maxWidth + PADDING_X_LAYER + 5)
+		.attr("y", 15)
+		.attr("fill", "black")
+		.attr("text-anchor", "start")
+		.attr("font-size", "14px")
+		.text("Not classified");
 }
 export function renderPack(
 	canvas: d3.Selection<SVGGElement, unknown, null, undefined>,
 	roots: any[],
 	writeDetailHover: (detail: string) => void,
-	handleRootClick: (root: any) => void
+	handleRootClick: (root: any) => void,
 ) {
 	let maxWidth = 0;
 	roots.forEach((root) => {
@@ -110,21 +118,21 @@ export function renderPack(
 			return;
 		}
 		const containerElement = canvas
-			.append('g')
-			.attr('transform', `translate(${root.containerX},${root.containerY})`)
-			.attr('id', `root-${index}`);
+			.append("g")
+			.attr("transform", `translate(${root.containerX},${root.containerY})`)
+			.attr("id", `root-${index}`);
 
 		// add container drag
 		containerElement.call(
-			d3.drag<any, any>().on('drag', function (event) {
+			d3.drag<any, any>().on("drag", function (event) {
 				// if not cross over
 				if (!root.isCrossOver) {
 					const x = event.dx;
-					// constraint on y axis
 					const y = 0;
 
 					root.containerX += x;
 					root.containerY += y;
+
 					// limit left and right boundary
 					if (root.containerX < 0) {
 						root.containerX = 0;
@@ -138,50 +146,56 @@ export function renderPack(
 					root.containerX += x;
 					root.containerY += y;
 				}
-				d3.select(this).attr('transform', `translate(${root.containerX},${root.containerY})`);
-			})
+				d3.select(this).attr(
+					"transform",
+					`translate(${root.containerX},${root.containerY})`,
+				);
+			}),
 		);
 
 		root.each((d: any) => {
 			const node = containerElement
-				.append('g')
-				.attr('transform', `translate(${d.x},${d.y})`)
-				.attr('class', 'node');
+				.append("g")
+				.attr("transform", `translate(${d.x},${d.y})`)
+				.attr("class", "node");
 
 			node
-				.append('circle')
-				.attr('r', d.r)
-				.attr('fill', 'url(#grad' + (d.data?.layer?.split(' ')?.join('') ?? 'Else') + ')')
-				.attr('stroke', 'black');
+				.append("circle")
+				.attr("r", d.r)
+				.attr(
+					"fill",
+					"url(#grad" + (d.data?.layer?.split(" ")?.join("") ?? "Else") + ")",
+				)
+				.attr("stroke", "black");
 
-			node.on('mouseover', function () {
-				const hoverDetail = JSON.stringify(d.data, null, '\t');
+			node.on("mouseover", function () {
+				const hoverDetail = JSON.stringify(d.data, null, "\t");
 				writeDetailHover(hoverDetail);
 
-				d3.select(this).select('circle').attr('stroke-width', 2);
+				d3.select(this).select("circle").attr("stroke-width", 2);
 			});
 
-			node.on('mouseout', function () {
-				writeDetailHover('{}');
-				d3.select(this).select('circle').attr('stroke-width', 1);
+			node.on("mouseout", function () {
+				writeDetailHover("{}");
+				d3.select(this).select("circle").attr("stroke-width", 1);
 			});
 
-			node.on('click', function () {
+			node.on("click", function () {
 				handleRootClick(root);
 			});
 
-			node.on('contextmenu', (event, d) => {
+			node.on("contextmenu", (event, d) => {
 				event.preventDefault();
-				console.log('right click', d);
+				console.log("right click", d);
 			});
 			// only show text for package
-			if (d.data.kind === 'package') {
+			if (d.data.kind === "package") {
 				node
-					.append('text')
-					.attr('dy', -d.r - 4)
-					.attr('fill', 'black')
-					.attr('text-anchor', 'middle')
-					.attr('font-size', '12px')
+					.append("text")
+					.attr("dy", -d.r - 4)
+					.attr("fill", "black")
+					.attr("text-anchor", "middle")
+					.attr("font-size", "12px")
 					.text(d.data.id);
 			}
 		});
