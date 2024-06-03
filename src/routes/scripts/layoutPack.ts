@@ -28,8 +28,8 @@ export default function layoutPack(roots: any[]) {
 		// // Sum and sort the data.
 		root.sum((d: any) => d.count);
 
-		// arbitrary decision: determine the max size of the root based on its value
-		const size = Math.sqrt(root.value) * FACTOR; // make it non linear
+		// determine the max size of the root based on its value
+		const size = Math.log10(root.value+1) * FACTOR; // make it non linear
 		pack.size([size, size]);
 
 		pack(root);

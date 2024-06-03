@@ -32,36 +32,25 @@ export function turnTableToHierarchyData(table: d3.DSVRowArray<string>) {
 		for (const cls in classes) {
 			const rows = classes[cls];
 
-			// TODO: should we differentiate length=1?
-			if (rows.length > 1) {
-				// add instances with their respective layers and counts
-				rows.forEach((row: { count: any; layer: any }, index: any) => {
-					temporaryTable.push({
-						id: `${cls}-child${index + 1}`,
-						parent: cls,
-						kind: 'layer_info',
-						count: row.count,
-						layer: row.layer
-					});
+			// add instances with their respective layers and counts
+			rows.forEach((row: { count: any; layer: any }) => {
+				temporaryTable.push({
+					id: `${cls}-${row.layer}`,
+					parent: cls,
+					kind: 'layer_info',
+					count: row.count,
+					layer: row.layer
 				});
+			});
 
-				// append parent class
-				temporaryTable.push({
-					id: cls,
-					parent: pkg,
-					kind: 'class',
-					count: 0,
-					layer: undefined
-				});
-			} else {
-				temporaryTable.push({
-					id: cls,
-					parent: pkg,
-					kind: 'class',
-					count: rows[0].count,
-					layer: rows[0].layer
-				});
-			}
+			// append parent class
+			temporaryTable.push({
+				id: cls,
+				parent: pkg,
+				kind: 'class',
+				count: 0,
+				layer: undefined
+			});
 		}
 
 		// append package

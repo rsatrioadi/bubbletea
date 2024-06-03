@@ -16,7 +16,6 @@ export function renderLayer(
 	});
 
 	const layerHeight = biggestRootRadius.r * LAYER_SIZE_MULTIPLIER;
-	// TODO: parameterize?
 
 	const defs = canvas.append('svg:defs');
 
@@ -31,7 +30,7 @@ export function renderLayer(
 
 		grad.append('stop').attr('offset', '0%').style('stop-color', 'white');
 
-		grad.append('stop').attr('offset', '75%').style('stop-color', adjustHexColor(value, -0.8));
+		grad.append('stop').attr('offset', '75%').style('stop-color', adjustHexColor(value, -0.1));
 	});
 
 	const grad = defs
@@ -42,9 +41,9 @@ export function renderLayer(
 		.attr('r', '100%')
 		.attr('id', 'gradElse');
 
-	grad.append('stop').attr('offset', '0%').style('stop-color', '#666666');
+	grad.append('stop').attr('offset', '0%').style('stop-color', '#D9B299');
 
-	grad.append('stop').attr('offset', '75%').style('stop-color', '#cccccc');
+	grad.append('stop').attr('offset', '75%').style('stop-color', '#ecd8cc');
 
 	// calculate max width
 	let maxWidth = 0;
@@ -62,7 +61,7 @@ export function renderLayer(
 			.attr('y', i * layerHeight)
 			.attr('width', layerWidth)
 			.attr('height', layerHeight)
-			.attr('fill', () => adjustHexColor(colorMap[layer] ?? '#cccccc', 0.4))
+			.attr('fill', () => adjustHexColor(colorMap[layer] ?? '#cccccc', 0.7))
 			.attr('stroke', 'black');
 
 		canvas
@@ -74,6 +73,22 @@ export function renderLayer(
 			.attr('font-size', '14px')
 			.text(layer);
 	});
+	canvas
+		.append('rect')
+		.attr('x', maxWidth + PADDING_X_LAYER)
+		.attr('y', 0)
+		.attr('width', layerHeight)
+		.attr('height', 4*layerHeight)
+		.attr('fill', adjustHexColor(colorMap['Unknown Layer'], 0.7))
+		.attr('stroke', 'black');
+	canvas
+		.append('text')
+		.attr('x', maxWidth + PADDING_X_LAYER + 5)
+		.attr('y', 15)
+		.attr('fill', 'black')
+		.attr('text-anchor', 'start')
+		.attr('font-size', '14px')
+		.text('Not classified');
 }
 export function renderPack(
 	canvas: d3.Selection<SVGGElement, unknown, null, undefined>,
