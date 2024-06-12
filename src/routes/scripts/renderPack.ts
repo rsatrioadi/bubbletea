@@ -54,12 +54,10 @@ export function renderLayer(
 	grad.append("stop").attr("offset", "75%").style("stop-color", "#ecd8cc");
 
 	// calculate max width
-	let maxWidth = 0;
-	roots.forEach((root) => {
-		if (root.containerX + root.r * 2 > maxWidth) {
-			maxWidth = root.containerX + root.r * 2;
-		}
-	});
+	const maxWidth = roots.reduce((maxWidth, root) => {
+		return Math.max(maxWidth, root.isCrossOver ? 0 : (root.containerX + root.r * 2));
+	}, 0);
+
 	// RENDER LAYER
 	const layerWidth = maxWidth + PADDING_X_LAYER;
 	layers.forEach((layer, i) => {
@@ -141,10 +139,20 @@ export function renderPack(
 						root.containerX = layerWidth - root.r * 2;
 					}
 				} else {
-					const x = event.dx;
+					const x = 0;
 					const y = event.dy;
+
 					root.containerX += x;
 					root.containerY += y;
+
+					// limit top and bottom boundary
+					if (root.containerY < 0) {
+						root.containerY = 0;
+					}
+					// TODO: 1000 should be the height of the grey column
+					if (root.containerY + root.r * 2 > 1000) {
+						root.containerY = 1000 - root.r * 2;
+					}
 				}
 				d3.select(this).attr(
 					"transform",
