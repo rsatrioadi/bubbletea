@@ -55,61 +55,13 @@
 			</div>
 		</Resizable.Pane>
 		<!-- second section -->
-		<Resizable.Handle />
-		<Resizable.Pane class="pt-4" defaultSize={10} minSize={10}>
-			{#if rootInFocus}
-				<div class="text-center">Root in focus: {JSON.stringify(rootInFocus.data?.id)}</div>
-				<!-- toggle to hide -->
-				<div class="text-center">
-					<Button
-						on:click={() => {
-							if (rootInFocus) {
-								rootInFocus.isHidden = true;
-								rootInFocus = null;
-								doRerender = true;
-							}
-						}}>Hide</Button
-					>
-				</div>
-			{:else}
-				<div class="text-center">No root in focus</div>
-			{/if}
-		</Resizable.Pane>
-		<Resizable.Handle />
-		<!-- third section -->
-		<Resizable.Pane>
-			<!-- hidden node list -->
-			{#if true}
-				<div class="text-center">Hidden nodes</div>
-				<div class="flex flex-col gap-2">
-					{#each roots as root}
-						{#if root.isHidden}
-							<div class="">
-								<Button
-									variant="ghost"
-									on:click={() => {
-										root.isHidden = false;
-										doRerender = true;
-									}}
-								>
-									{root.data.id}
-								</Button>
-							</div>
-						{/if}
-					{/each}
-				</div>
-			{/if}
-		</Resizable.Pane>
-		<Resizable.Handle />
-		<!-- fourth section -->
 		{#if objectDetail.length === 0}
 			<Resizable.Pane class="p-4">
-				<div class="text-center">Hover on the pack to see the detail</div>
+				<div class="text-center">Hover on a circle to see its details.</div>
 			</Resizable.Pane>
 		{:else}
 			<Resizable.Pane class="pb-4">
 				<Table.Root>
-					<Table.Caption>Attributes</Table.Caption>
 					<Table.Header>
 						<Table.Row>
 							<Table.Head class="w-[100px]">Attribute</Table.Head>
