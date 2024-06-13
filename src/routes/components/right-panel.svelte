@@ -65,7 +65,7 @@
 					<Table.Header>
 						<Table.Row>
 							<Table.Head class="w-[100px]">Attribute</Table.Head>
-							<Table.Head>Data</Table.Head>
+							<Table.Head class="w-[300px]">Data</Table.Head>
 						</Table.Row>
 					</Table.Header>
 					{#each objectDetail as [key, value]}
