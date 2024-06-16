@@ -85,7 +85,7 @@
 		<Resizable.Pane class="p-4" defaultSize={75}>
 			<Tabs.Root value="pack" class="h-full">
 				<Tabs.List>
-					<Tabs.Trigger value="pack">Pack</Tabs.Trigger>
+					<Tabs.Trigger value="pack">BubbleTea</Tabs.Trigger>
 					<Tabs.Trigger value="table">Table</Tabs.Trigger>
 				</Tabs.List>
 				<Tabs.Content value="pack" class="h-full">
