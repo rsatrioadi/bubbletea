@@ -101,6 +101,7 @@ export function renderPack(
 	roots: any[],
 	writeDetailHover: (detail: string) => void,
 	handleRootClick: (root: any) => void,
+	usePieChart: boolean,
 ) {
 	let maxWidth = 0;
 	roots.forEach((root) => {
@@ -162,7 +163,7 @@ export function renderPack(
 		);
 
 		root.each((d: any) => {
-			if (d.data.kind === "layer_info") {
+			if (usePieChart && d.data.kind === "layer_info") {
 				return;
 			}
 
@@ -177,7 +178,7 @@ export function renderPack(
 				.attr('fill', 'url(#grad' + (d.data?.layer?.split(' ')?.join('') ?? 'Else') + ')')
 				.attr('stroke', 'black');
 
-			if (d.data.kind === "class" && d.children){
+			if (usePieChart && d.data.kind === "class" && d.children){
 				// render children as pie
 				const data = d.children.map((child: any) => child.data.count);
 				const pie = d3.pie().padAngle(0);
