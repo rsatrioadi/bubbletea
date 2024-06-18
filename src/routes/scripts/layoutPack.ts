@@ -148,7 +148,13 @@ function calculateRootsLocationBasedOnDominantLayer(roots: any[]) {
 		if not, set Y to be -100
 		if dominant layer = 1, set Y the center of that layer
 		*/
-		if (dominantLayer.length > 2) {
+		const isTheDominantLayerContainUnknownLayer = dominantLayer
+			.map((layer: any) => {
+				return layer.layer;
+			})
+			.includes('Unknown Layer');
+
+		if (isTheDominantLayerContainUnknownLayer || dominantLayer.length > 2) {
 			root.isCrossOver = true;
 		} else if (dominantLayer.length === 2) {
 			const layer1 = dominantLayer[0].layer;
