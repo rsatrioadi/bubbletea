@@ -51,7 +51,7 @@
 		<Resizable.Pane class="pt-4" defaultSize={10} minSize={10}>
 			<div class="grid w-full max-w-sm items-center gap-1.5">
 				<Label for="picture" class="font-bold">Input</Label>
-				<Input id="picture" type="file" on:change={handleFileChange} />
+				<Input id="picture" type="file" accept=".json,.csv" on:change={handleFileChange} />
 			</div>
 		</Resizable.Pane>
 		<!-- second section -->
