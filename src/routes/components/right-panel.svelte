@@ -6,26 +6,32 @@
 	import * as d3 from 'd3';
 	import type { HierarchyData } from '$lib/type';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import { convertJsonToCsvText } from '$lib/utils';
 
 	export let roots;
 	export let hoverDetail = '';
 	export let doRecalculateHierarchyData;
 	export let doRerender;
-	export let table: d3.DSVRowArray<string>;
+	export let table: d3.DSVRowArray<string>
 	export let rootInFocus: HierarchyData | null;
 
 	function inputDataToHierarchyData(csvText: string): any {
 		// package, class, layer, count
 		table = d3.csvParse(csvText);
 	}
-
+	
 	function handleFileChange(e: any) {
 		const file = e.target?.files?.[0];
 		if (!file) return;
 		const reader = new FileReader();
 		reader.onload = (e) => {
 			const text = e.target?.result as string;
-			inputDataToHierarchyData(text);
+			if (file.type === "application/json") {
+				const csvText = convertJsonToCsvText(JSON.parse(text))
+				table = d3.csvParse(csvText);
+			} else {
+				inputDataToHierarchyData(text);
+			}
 			doRecalculateHierarchyData = true;
 		};
 		reader.readAsText(file);

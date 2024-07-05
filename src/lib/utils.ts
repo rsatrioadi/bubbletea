@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { cubicOut } from "svelte/easing";
 import type { TransitionConfig } from "svelte/transition";
+import type { DSVRowArray } from "d3";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -60,3 +61,12 @@ export const flyAndScale = (
 		easing: cubicOut
 	};
 };
+
+export function convertJsonToCsvText(json: JSON): string{
+	const columns = "package,class,layer,count\n";
+	const csvText = columns
+	// Filter nodes without layer
+	// Parse which one is method which one is class
+	// Count them and aggregate the data
+	return csvText;
+}
