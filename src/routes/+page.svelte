@@ -35,6 +35,8 @@
 	let doRecalculateHierarchyData = true;
 	let doRerender = false;
 
+	let usePieChart = false;
+
 	let rootInFocus: HierarchyData | null = null;
 	function writeDetailHover(detail: string) {
 		hoverDetail = detail;
@@ -69,7 +71,7 @@
 					})
 				);
 				renderLayer(canvas, roots);
-				renderPack(canvas, roots, writeDetailHover, handleRootClick);
+				renderPack(canvas, roots, writeDetailHover, handleRootClick, usePieChart);
 				doRerender = false;
 			}
 		}
@@ -107,6 +109,7 @@
 				bind:doRecalculateHierarchyData
 				bind:roots
 				bind:doRerender
+				bind:usePieChart
 			/>
 		</Resizable.Pane>
 	</Resizable.PaneGroup>

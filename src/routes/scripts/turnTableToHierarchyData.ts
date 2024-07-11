@@ -73,8 +73,6 @@ export function turnTableToHierarchyData(table: d3.DSVRowArray<string>) {
 			.id((d: any) => d.id)
 			.parentId((d: any) => d.parent)(temporaryTable);
 
-		// temporary, limit to two
-
 		roots.push(root);
 	});
 	return roots;

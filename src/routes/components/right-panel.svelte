@@ -7,6 +7,7 @@
 	import type { HierarchyData } from '$lib/type';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { convertJsonToCsvText } from '$lib/utils';
+	import Switch from '$lib/components/ui/switch/switch.svelte';
 
 	export let roots;
 	export let hoverDetail = '';
@@ -14,6 +15,7 @@
 	export let doRerender;
 	export let table: d3.DSVRowArray<string>
 	export let rootInFocus: HierarchyData | null;
+	export let usePieChart = false;
 
 	function inputDataToHierarchyData(csvText: string): any {
 		// package, class, layer, count
@@ -54,12 +56,24 @@
 	<div class="mt-2 text-3xl font-bold">BubbleTea Viz</div>
 	<Resizable.PaneGroup direction="vertical">
 		<!-- first section -->
-		<Resizable.Pane class="pt-4" defaultSize={10} minSize={10}>
+		<Resizable.Pane class="pt-4" defaultSize={20} minSize={20}>
 			<div class="grid w-full max-w-sm items-center gap-1.5">
 				<Label for="picture" class="font-bold">Input</Label>
 				<Input id="picture" type="file" accept=".json,.csv" on:change={handleFileChange} />
 			</div>
+			<!-- toggle for pie chart -->
+			<div class="mt-2 flex items-center">
+				<Switch
+					bind:checked={usePieChart}
+					on:click={() => {
+						doRerender = true;
+					}}
+				/>
+				<Label for="pie-chart" class="ml-2">Use Pie Chart</Label>
+			</div>
 		</Resizable.Pane>
+		<Resizable.Handle />
+
 		<!-- second section -->
 		{#if objectDetail.length === 0}
 			<Resizable.Pane class="p-4">
