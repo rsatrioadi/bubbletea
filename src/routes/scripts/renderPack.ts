@@ -84,7 +84,7 @@ export function renderLayer(
 		words.forEach((word) => {
 			layerText.append("tspan")
 				.attr("x", 5)
-				.attr("dy", "1.2em")
+				.attr("dy", "1em")
 				.text(word);
 		});
 	});
