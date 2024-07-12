@@ -194,7 +194,6 @@ export function renderPack(
 				const pie = d3.pie().padAngle(0);
 				const pieData = pie(data);
 				const arc = d3.arc().innerRadius(0).outerRadius(d.r - 0.5) as any;
-				const arc = d3.arc().innerRadius(0).outerRadius(d.r-0.5) as any;
 				const dataLayer = d.children.map((child: any) => child.data.layer);
 
 				node
