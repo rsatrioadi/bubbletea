@@ -76,7 +76,7 @@ export function renderLayer(
 		canvas
 			.append("text")
 			.attr("x", 5)
-			.attr("y", i * layerHeight + 15 + index * 18) // Adjust y position for each word
+			.attr("y", i * layerHeight + (index+1) * 15) // Adjust y position for each word
 			.attr("fill", "black")
 			.attr("text-anchor", "start")
 			.attr("font-weight", "bold")
