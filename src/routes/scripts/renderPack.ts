@@ -69,21 +69,24 @@ export function renderLayer(
 			.attr("height", layerHeight)
 			.attr("fill", () => adjustHexColor(colorMap[layer] ?? "#cccccc", 0.7))
 			.attr("stroke", "black");
-			
+
 		const words = layer.split(' ');
 
-		words.forEach((word, index) => {
-		canvas
+		const layerText = canvas
 			.append("text")
 			.attr("x", 5)
-			.attr("y", i * layerHeight + (index+1) * 15) // Adjust y position for each word
+			.attr("y", i * layerHeight)
 			.attr("fill", "black")
 			.attr("text-anchor", "start")
 			.attr("font-weight", "bold")
-			.attr("font-size", "14px")
-			.text(word);
-		});
+			.attr("font-size", "14px");
 
+		words.forEach((word) => {
+			layerText.append("tspan")
+				.attr("x", 5)
+				.attr("dy", "1.2em")
+				.text(word);
+		});
 	});
 	canvas
 		.append("rect")
@@ -191,6 +194,7 @@ export function renderPack(
 				const pie = d3.pie().padAngle(0);
 				const pieData = pie(data);
 				const arc = d3.arc().innerRadius(0).outerRadius(d.r - 0.5) as any;
+				const arc = d3.arc().innerRadius(0).outerRadius(d.r-0.5) as any;
 				const dataLayer = d.children.map((child: any) => child.data.layer);
 
 				node
