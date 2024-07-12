@@ -199,7 +199,6 @@ export function renderPack(
 					.data(pieData)
 					.join('path')
 					.attr('fill', (d, i) => {
-						console.log('d', d);
 						return `url(#grad${dataLayer[i].split(' ').join('')})`;
 					})
 					.attr('d', arc)

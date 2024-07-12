@@ -1,9 +1,6 @@
 <script lang="ts">
 	import * as Table from '$lib/components/ui/table';
 	export let table: d3.DSVRowArray<string>;
-	// package, class , layer, count
-	console.log('table', table);
-	// parse to array
 	let tableArray: any[] = [];
 	$: {
 		if (table) {
@@ -14,7 +11,6 @@
 				});
 				return newRow;
 			});
-			console.log('tableArray', tableArray);
 		}
 	}
 </script>
