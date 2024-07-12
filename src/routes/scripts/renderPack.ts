@@ -101,6 +101,7 @@ export function renderPack(
 	roots: any[],
 	writeDetailHover: (detail: string) => void,
 	handleRootClick: (root: any) => void,
+	usePieChart: boolean,
 ) {
 	let maxWidth = 0;
 	roots.forEach((root) => {
@@ -162,19 +163,42 @@ export function renderPack(
 		);
 
 		root.each((d: any) => {
+			if (usePieChart && d.data.kind === "layer_info") {
+				return;
+			}
+
 			const node = containerElement
-				.append("g")
-				.attr("transform", `translate(${d.x},${d.y})`)
-				.attr("class", "node");
+				.append('g')
+				.attr('transform', `translate(${d.x},${d.y})`)
+				.attr('class', 'node');
 
 			node
-				.append("circle")
-				.attr("r", d.r)
-				.attr(
-					"fill",
-					"url(#grad" + (d.data?.layer?.split(" ")?.join("") ?? "Else") + ")",
-				)
-				.attr("stroke", "black");
+				.append('circle')
+				.attr('r', d.r)
+				.attr('fill', 'url(#grad' + (d.data?.layer?.split(' ')?.join('') ?? 'Else') + ')')
+				.attr('stroke', 'black');
+
+			if (usePieChart && d.data.kind === "class" && d.children){
+				// render children as pie
+				const data = d.children.map((child: any) => child.data.count);
+				const pie = d3.pie().padAngle(0);
+				const pieData = pie(data);
+				const arc = d3.arc().innerRadius(0).outerRadius(d.r) as any;
+				const dataLayer = d.children.map((child: any) => child.data.layer);
+
+				node
+					.append('g')
+					.selectAll()
+					.data(pieData)
+					.join('path')
+					.attr('fill', (d, i) => {
+						console.log('d', d);
+						return `url(#grad${dataLayer[i].split(' ').join('')})`;
+					})
+					.attr('d', arc)
+					.append('title')
+					.text((d, i) => `${dataLayer[i]}: ${data[i]}`);
+			}
 
 			node.on("mouseover", function () {
 				const hoverDetail = JSON.stringify(d.data, null, "\t");
