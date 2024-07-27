@@ -6,13 +6,14 @@
 	import * as d3 from 'd3';
 	import type { HierarchyData } from '$lib/type';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import { convertJsonToCsvText } from '$lib/utils';
 	import Switch from '$lib/components/ui/switch/switch.svelte';
 
 	export let roots;
 	export let hoverDetail = '';
 	export let doRecalculateHierarchyData;
 	export let doRerender;
-	export let table: d3.DSVRowArray<string>;
+	export let table: d3.DSVRowArray<string>
 	export let rootInFocus: HierarchyData | null;
 	export let usePieChart = false;
 
@@ -20,14 +21,19 @@
 		// package, class, layer, count
 		table = d3.csvParse(csvText);
 	}
-
+	
 	function handleFileChange(e: any) {
 		const file = e.target?.files?.[0];
 		if (!file) return;
 		const reader = new FileReader();
 		reader.onload = (e) => {
 			const text = e.target?.result as string;
-			inputDataToHierarchyData(text);
+			if (file.type === "application/json") {
+				const csvText = convertJsonToCsvText(JSON.parse(text))
+				table = d3.csvParse(csvText);
+			} else {
+				inputDataToHierarchyData(text);
+			}
 			doRecalculateHierarchyData = true;
 		};
 		reader.readAsText(file);
@@ -53,7 +59,7 @@
 		<Resizable.Pane class="pt-4" defaultSize={20} minSize={20}>
 			<div class="grid w-full max-w-sm items-center gap-1.5">
 				<Label for="picture" class="font-bold">Input</Label>
-				<Input id="picture" type="file" on:change={handleFileChange} />
+				<Input id="picture" type="file" accept=".json,.csv" on:change={handleFileChange} />
 			</div>
 			<!-- toggle for pie chart -->
 			<div class="mt-2 flex items-center">
