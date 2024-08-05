@@ -13,22 +13,8 @@
 
 	let isMounted = false;
 	let hoverDetail = '';
-	const data: HierarchyData = {
-		class: 'App',
-		count: 0,
-		id: 'App',
-		children: [
-			{
-				package: 'com.fsck.k9.account',
-				class: 'com.fsck.k9.account.AccountCreator',
-				layer: 'Presentation Layer',
-				id: 'com.fsck.k9.account.AccountCreator',
-				count: 1
-			}
-		]
-	};
 
-	let roots = [d3.hierarchy(data) as any];
+	let roots = [d3.hierarchy({}) as any];
 	let table: d3.DSVRowArray<string>;
 	let canvas: any;
 
