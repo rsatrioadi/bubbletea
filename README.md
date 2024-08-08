@@ -5,10 +5,10 @@
 Once you've installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
 ```bash
-bun run dev
+npm run dev
 
 # or start the server and open the app in a new browser tab
-bun run dev -- --open
+npm run dev -- --open
 ```
 
 ## Building
