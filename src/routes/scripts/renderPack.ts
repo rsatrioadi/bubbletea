@@ -20,7 +20,8 @@ export function renderLayer(
 		return acc;
 	});
 
-	const layerHeight = biggestRootRadius.r * LAYER_SIZE_MULTIPLIER;
+	const layerHeight = biggestRootRadius.r ? biggestRootRadius.r * LAYER_SIZE_MULTIPLIER : 50;
+
 
 	const defs = canvas.append("svg:defs");
 
@@ -56,7 +57,7 @@ export function renderLayer(
 	// calculate max width
 	const maxWidth = roots.reduce((maxWidth, root) => {
 		return Math.max(maxWidth, root.isCrossOver ? 0 : (root.containerX + root.r * 2));
-	}, 0);
+	 }, 100); // 100 is the minimum width
 
 	// RENDER LAYER
 	const layerWidth = maxWidth + PADDING_X_LAYER;
