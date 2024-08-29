@@ -5,7 +5,6 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import * as d3 from 'd3';
 	import type { HierarchyData } from '$lib/type';
-	import Button from '$lib/components/ui/button/button.svelte';
 	import { convertJsonToCsvText } from '$lib/utils';
 	import Switch from '$lib/components/ui/switch/switch.svelte';
 
