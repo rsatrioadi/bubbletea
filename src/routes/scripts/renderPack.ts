@@ -68,7 +68,7 @@ export function renderLayer(
 			.attr("y", i * layerHeight)
 			.attr("width", layerWidth)
 			.attr("height", layerHeight)
-			.attr("fill", () => adjustHexColor(colorMap[layer] ?? "#cccccc", 0.7))
+			.attr("fill", () => adjustHexColor(colorMap[layer] ?? "#cccccc", 0.5))
 			.attr("stroke", "black");
 
 		const words = layer.split(' ');
@@ -95,7 +95,7 @@ export function renderLayer(
 		.attr("y", 0)
 		.attr("width", layerHeight)
 		.attr("height", 4 * layerHeight)
-		.attr("fill", adjustHexColor(colorMap["Unknown Layer"], 0.7))
+		.attr("fill", adjustHexColor(colorMap["Unknown Layer"], 0.5))
 		.attr("stroke", "black");
 	canvas
 		.append("text")
